@@ -1,0 +1,19 @@
+version: 1
+
+name: hvacAPI
+
+environments:
+  dev:
+    api:
+      type: apigateway
+      swagger: ./swagger.yml
+      description: API for heating, ventilation, and air conditioning (HVAC) controller
+      dependencies:
+        - hvac
+    hvac:
+      type: dynamodb
+      partition_key:
+        name: uuid
+        type: String
+        
+

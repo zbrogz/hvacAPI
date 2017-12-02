@@ -1,0 +1,134 @@
+swagger: '2.0'
+info:
+  version: "1.0.1"
+  title: hvacAPI
+  description: API for heating, ventilation, and air conditioning (HVAC) controller
+schemes:
+ - https
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+security:
+  - ApiKeyAuth: []
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /hvac:
+    post:
+      description: Adds a new hvac controller
+      parameters:
+        - name: area
+          in: body
+          description: Name of area where hvac controller is located (e.g. Main Floor)
+          required: true
+          schema:
+            type: object
+            properties:
+              area:
+                type: string
+      responses:
+        200:
+          description: hvac device state with uuid
+          schema:
+            $ref: '#/definitions/Hvac'
+        400:
+          $ref: '#/responses/Error'
+      x-lambda-function: hvac
+    get:
+      description: Gives list of hvac controllers
+      responses:
+        200:
+          description: hvac controllers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Hvac'
+      x-lambda-function: hvac
+        
+  '/hvac/{uuid}':
+    get:
+      description: Gets the state of an hvac controller
+      parameters: 
+        - $ref: '#/parameters/UUID'
+      responses:
+        200:
+          description: hvac url
+          schema:
+            $ref: '#/definitions/Hvac'
+        400:
+          $ref: '#/responses/Error'
+      x-lambda-function: hvac
+
+    put:
+      description: Updates the state of an hvac controller
+      parameters: 
+        - $ref: '#/parameters/UUID'
+        - name: state
+          in: body
+          description: hvac state
+          schema:
+            $ref: '#/definitions/Hvac'
+      responses:
+        200:
+          description: Successfully updated hvac controller
+        400:
+          $ref: '#/responses/Error'
+      x-lambda-function: hvac
+    delete:
+      description: Delete an hvac controller by id
+      parameters:
+          - $ref: '#/parameters/UUID'
+      responses:
+        200:
+          description: Successfully deleted hvac controller
+        400:
+          $ref: '#/responses/Error'
+      x-lambda-function: hvac
+  
+definitions:
+  Hvac:
+    description: hvac controller state
+    type: object
+    properties:
+      uuid:
+        type: string
+      area:
+        type: string
+      heater:
+        type: boolean
+      ac:
+        type: boolean
+      fan:
+        type: boolean
+      off_time:
+        type: integer
+      update_period:
+        type: integer
+
+parameters:
+  UUID:
+    name: uuid
+    in: path
+    type: string
+    required: true
+    description: Id of hvac controller
+
+responses:
+  Error:
+    description: Invalid request error
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          
+x-lambda-functions:
+  hvac:
+    runtime: python2.7
+    handler: hvac.lambda_handler
+    memory: 128
+    path_to_code: ./
