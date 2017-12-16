@@ -9,11 +9,15 @@ environments:
       swagger: ./swagger.yml
       description: API for heating, ventilation, and air conditioning (HVAC) controller
       dependencies:
-        - hvac
-    hvac:
+        - state
+        - subscriptions
+    state:
       type: dynamodb
       partition_key:
         name: uuid
         type: String
-        
-
+    subscriptions:
+      type: dynamodb
+      partition_key:
+        name: sub_arn
+        type: String
