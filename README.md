@@ -6,5 +6,5 @@ Deployable on AWS using Handel: https://handel.readthedocs.io/en/latest/getting-
 2) Install Handel: `npm install -g handel`
 3) Install AWS CLI: http://docs.aws.amazon.com/cli/latest/userguide/installing.html
 4) Configure AWS CLI: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
-5) Clone the HomeAPI repo: `git clone https://github.com/crslade/HomeAPI.git`
-6) Deploy the HomeAPI using handel: `handel deploy -c default-us-west-2 -e dev`
+5) Clone the hvacAPI repo: `git clone https://github.com/zbrogz/hvacAPI.git`
+6) Deploy the hvacAPI using handel: `handel deploy -c default-us-west-2 -e dev`
