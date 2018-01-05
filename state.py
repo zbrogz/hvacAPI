@@ -16,21 +16,8 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(o)
 
 
-def sns():
-    return boto3.client('sns')
-
-
 def state_table():
     return boto3.resource('dynamodb').Table(os.environ['STATE_TABLE_NAME'])
-
-
-# Notifies subscribers of updates to the hvac controller
-def publish(state):
-    sns = boto3.client('sns')
-    sns.publish(
-        TargetArn=state['topic_arn'],
-        Message=json.dumps(state),
-        MessageStructure='json')
 
 
 def get_hvac(uuid):
@@ -57,10 +44,8 @@ def create_hvac(hvac_data):
     if (not hvac_data['area'] or not isinstance(hvac_data['area'], str)):
         raise Exception('Error. Must specify area.')
     uuid = Uuid().hex
-    topic_arn = sns().create_topic(Name='hvac-' + uuid)['TopicArn']
     state = {
         'uuid': uuid,
-        'topic_arn': topic_arn,
         'area': hvac_data['area'],
         'heater': False,
         'ac': False,
@@ -104,14 +89,11 @@ def update_hvac(uuid, hvac_data):
         raise Exception('Error. Invalid update request.')
     updateExpressionStr = "set " + (",".join(updateExpressions))
 
-    update_reponse = state_table().update_item(
+    state_table().update_item(
         Key={'uuid': uuid},
         UpdateExpression=updateExpressionStr,
         ExpressionAttributeValues=attributeValues,
         ReturnValues="ALL_NEW")
-
-    # Notify subscribers of state change
-    publish(update_reponse['Attributes'])
 
     response = {
         "isBase64Encoded": "false",
@@ -123,11 +105,7 @@ def update_hvac(uuid, hvac_data):
 
 def delete_hvac(uuid):
     # Delete hvac state
-    state = state_table().delete_item(
-        Key={'uuid': uuid},
-        ReturnValues="ALL_OLD")
-    # Delete topic and subscriptions
-    sns().delete(TargetArn=state['topic_arn'])
+    state_table().delete_item(Key={'uuid': uuid})
     response = {
         "isBase64Encoded": "false",
         "statusCode": 200,

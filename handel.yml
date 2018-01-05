@@ -10,14 +10,8 @@ environments:
       description: API for heating, ventilation, and air conditioning (HVAC) controller
       dependencies:
         - state
-        - subscriptions
     state:
       type: dynamodb
       partition_key:
         name: uuid
-        type: String
-    subscriptions:
-      type: dynamodb
-      partition_key:
-        name: sub_arn
         type: String

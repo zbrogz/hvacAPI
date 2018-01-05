@@ -1,12 +1,10 @@
 swagger: '2.0'
 info:
-  version: "1.0.1"
+  version: "2.0"
   title: hvacAPI
   description: API for heating, ventilation, and air conditioning (HVAC) controller
 schemes:
  - https
-# Added by API Auto Mocking Plugin
-host: virtserver.swaggerhub.com
 basePath: /dev
 securityDefinitions:
   ApiKeyAuth:
@@ -91,71 +89,6 @@ paths:
         400:
           $ref: '#/responses/Error'
       x-lambda-function: state
-  '/hvac/{uuid}/subscription':
-    get:
-      description: Gets all of the subscriptions to a particular hvac controller
-      parameters: 
-        - $ref: '#/parameters/UUID'
-      responses:
-        200:
-          description: Subscriptions to hvac
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Subscription'
-      x-lambda-function: subscription
-    post:
-      description: subscribe to an hvac controller
-      parameters:
-        - $ref: '#/parameters/UUID'
-        - name: sub
-          in: body
-          description: subscription to the hvac controller
-          required: true
-          schema:
-            type: object
-            properties:
-              protocol:
-                type: string
-              endpoint:
-                type: string
-      responses:
-        200:
-          description: subscription
-          schema:
-            $ref: '#/definitions/Subscription'
-        400:
-          $ref: '#/responses/Error'
-      x-lambda-function: subscription
-      
-  '/hvac/{uuid}/subscription/{sub_arn}':
-    get:
-      description: Gets a particular subscription
-      parameters:
-        - $ref: '#/parameters/UUID'
-        - $ref: '#/parameters/SUB_ARN'
-      responses:
-        200:
-          description: subscription
-          schema:
-            $ref: '#/definitions/Subscription'
-        400:
-          $ref: '#/responses/Error'
-      x-lambda-function: subscription
-    delete:
-      description: Deletes a particular subscription
-      parameters:
-        - $ref: '#/parameters/UUID'
-        - $ref: '#/parameters/SUB_ARN'
-      responses:
-        200:
-          description: subscription
-          schema:
-            $ref: '#/definitions/Subscription'
-        400:
-          $ref: '#/responses/Error'
-      x-lambda-function: subscription
-      
         
 definitions:
   State:
@@ -163,8 +96,6 @@ definitions:
     type: object
     properties:
       uuid:
-        type: string
-      topic_arn:
         type: string
       area:
         type: string
@@ -178,20 +109,6 @@ definitions:
         type: integer
       update_period:
         type: integer
-          
-  Subscription:
-    type: object
-    properties:
-      sub_arn:
-        type: string
-      hvac_id:
-        type: string
-      topic_arn:
-        type: string
-      protocol: 
-        type: string
-      endpoint: 
-        type: string
 
 parameters:
   UUID:
@@ -200,12 +117,6 @@ parameters:
     type: string
     required: true
     description: Id of hvac controller
-  SUB_ARN:
-    name: sub_arn
-    in: path
-    type: string
-    required: true
-    description: ARN of the subscription
 
 responses:
   Error:
@@ -220,11 +131,6 @@ x-lambda-functions:
   state:
     runtime: python3.6
     handler: state.lambda_handler
-    memory: 128
-    path_to_code: ./
-  subscription:
-    runtime: python3.6
-    handler: subscription.lambda_handler
     memory: 128
     path_to_code: ./
   
