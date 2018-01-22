@@ -57,7 +57,7 @@ paths:
         - $ref: '#/parameters/UUID'
       responses:
         200:
-          description: hvac url
+          description: hvac state
           schema:
             $ref: '#/definitions/State'
         400:
@@ -106,6 +106,8 @@ definitions:
       fan:
         type: boolean
       off_time:
+        type: integer
+      min_off_time:
         type: integer
       update_period:
         type: integer

@@ -51,6 +51,7 @@ def create_hvac(hvac_data):
         'ac': False,
         'fan': False,
         'off_time': 0,
+        'min_off_time': 10,
         'update_period': 30
     }
     state_table().put_item(Item=state)
@@ -80,6 +81,10 @@ def update_hvac(uuid, hvac_data):
     if 'off_time' in hvac_data and isinstance(hvac_data['off_time'], int):
         updateExpressions.append("off_time = :o")
         attributeValues[':o'] = hvac_data['off_time']
+    if ('min_off_time' in hvac_data and
+            isinstance(hvac_data['min_off_time'], int)):
+        updateExpressions.append("min_off_time = :m")
+        attributeValues[':m'] = hvac_data['min_off_time']
     if ('update_period' in hvac_data and
             isinstance(hvac_data['update_period'], int)):
         updateExpressions.append("update_period = :u")
