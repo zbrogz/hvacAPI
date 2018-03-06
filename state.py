@@ -25,6 +25,7 @@ def get_hvac(uuid):
     response = {
         'isBase64Encoded': 'false',
         'statusCode': 200,
+        'headers': {'Access-Control-Allow-Origin': '*'},
         'body': json.dumps(hvac['Item'], cls=DecimalEncoder)
     }
     return response
@@ -35,6 +36,7 @@ def get_all_hvacs():
     response = {
         'isBase64Encoded': 'false',
         'statusCode': 200,
+        'headers': {'Access-Control-Allow-Origin': '*'},
         'body': json.dumps(hvacs['Items'], cls=DecimalEncoder)
     }
     return response
@@ -58,6 +60,7 @@ def create_hvac(hvac_data):
     response = {
         'isBase64Encoded': 'false',
         'statusCode': 200,
+        'headers': {'Access-Control-Allow-Origin': '*'},
         'body': json.dumps(state)
     }
     return response
@@ -74,7 +77,7 @@ def update_hvac(uuid, hvac_data):
         attributeValues[':h'] = hvac_data['heater']
     if 'ac' in hvac_data and isinstance(hvac_data['ac'], bool):
         updateExpressions.append("ac = :c")
-        attributeValues[':c'] = hvac_data['heater']
+        attributeValues[':c'] = hvac_data['ac']
     if 'fan' in hvac_data and isinstance(hvac_data['fan'], bool):
         updateExpressions.append("fan = :f")
         attributeValues[':f'] = hvac_data['fan']
@@ -103,6 +106,7 @@ def update_hvac(uuid, hvac_data):
     response = {
         "isBase64Encoded": "false",
         "statusCode": 200,
+        'headers': {'Access-Control-Allow-Origin': '*'},
         "body": "{\"message\": \"Hvac updated\"}"
     }
     return response
@@ -114,6 +118,7 @@ def delete_hvac(uuid):
     response = {
         "isBase64Encoded": "false",
         "statusCode": 200,
+        'headers': {'Access-Control-Allow-Origin': '*'},
         "body": "{\"message\": \"Hvac deleted.\"}"
     }
     return response
@@ -149,6 +154,7 @@ def lambda_handler(event, context):
         response = {
             "isBase64Encoded": "false",
             "statusCode": 400,
+            'headers': {'Access-Control-Allow-Origin': '*'},
             "body": "{\"errorMessage\": \"" + e.args[0] + ".\"}"
         }
         return response
